@@ -5,9 +5,13 @@
 
 int main(void) {
 
+    // READING PART
+
     encoder ecode("dat/shakespeare.idx", 10000);
     std::ifstream ifile("dat/shakespeare.txt");
     char* txt = new char[1000000];
+
+    // ENCODE PART
 
     while(ifile.good()){
         ifile.read(txt, 1000000);
@@ -15,6 +19,8 @@ int main(void) {
         ecode.encode(s);
     }
     ecode.close();
+
+    // DECODE PART
 
     decoder dcode("dat/shakespeare.idx", 10000);
     while(dcode.has) {
