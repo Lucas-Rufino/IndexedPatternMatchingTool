@@ -2,10 +2,16 @@
 #include <fstream>
 
 #include "lz78.hpp"
+#include "sarray.hpp"
 
 int main(void) {
-
+    sarray banana;
+    banana.fromText("banana");
+    for (auto x: banana.sarray){
+        printf("%d ", x);
+    }
     // READING PART
+    return 0;
 
     encoder ecode("dat/shakespeare.idx", 10000);
     std::ifstream ifile("dat/shakespeare.txt");
