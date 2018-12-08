@@ -10,6 +10,7 @@ int main(void) {
     for (auto x: banana.sarray){
         printf("%d ", x);
     }
+    banana.search("ana");
     // READING PART
     return 0;
 

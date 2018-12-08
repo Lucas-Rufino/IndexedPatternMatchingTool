@@ -3,9 +3,11 @@
 #include <string>
 
 struct sarray {
+    std::string text;
     std::vector<int> sarray;
 
     void fromText(std::string txt){
+        text=txt;
         std::vector<int> data;
         int txtSize = txt.size();
         if(txtSize == 1) {
@@ -41,5 +43,28 @@ struct sarray {
                 sarray[data[i]] = i;
             }
         }
+    }
+
+    std::vector<int> search(std::string pattern) {
+        int L = 0, R = text.size() - 1;
+        for(int i = 0, sz=pattern.size(); i < sz; i++){
+            int l=L, r=R;
+            // while(l<r-1){
+            //     int m=(l+r)/2;
+            //     if(m+i < text.size()){
+            //         if(text[m+i]>=pattern[i]){
+            //             r=m;
+            //         } else {
+            //             l=m;
+            //         }
+            //     } else {
+            //         r=m;
+            //     }
+            // }
+            // if(text[l+i]>=pattern[i])r=l;
+            // L=r;
+            printf("R: %d %d %d\n",r, i, sz);
+        }
+
     }
 };
