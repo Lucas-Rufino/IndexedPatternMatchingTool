@@ -6,13 +6,15 @@
 
 int main(void) {
     sarray banana;
-    banana.fromText("bananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANA");
+   // banana.fromText("BANANAbananaBANANA");
+
+    banana.fromText("bananaBANANAbananaBANANA\nbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANA");
    // banana.print();
    // banana.fromBytes(banana.toBytes());
    // banana.print();
     auto ret = banana.search("anana");
     for (auto x: ret){
-        printf("\n %d ", x);
+        printf("\n = %d ", x);
     }
     // READING PART
     return 0;

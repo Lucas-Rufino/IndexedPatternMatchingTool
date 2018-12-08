@@ -90,4 +90,5 @@ struct decoder {
     void close() {
         ibits.close();
     }
+    #undef get
 };
