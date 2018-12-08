@@ -45,26 +45,36 @@ struct sarray {
         }
     }
 
+    int getPosBin(std::string pattern, int i, int L, int R, bool equals){
+        int l=L, r=R;
+        while(l<r-1){
+            int m=(l+r)/2;
+            int M = sarray[m];
+            if(M+i < text.size()){
+                if(text[M+i]>pattern[i] || (equals&&text[M+i]==pattern[i])){
+                    r=m;
+                } else {
+                    l=m;
+                }
+            } else {
+                r=m;
+            }
+        }
+        int M = sarray[l];
+        if(text[M+i]>pattern[i] || (equals&&text[M+i]==pattern[i]))r=l;
+        return r;
+    }
+
     std::vector<int> search(std::string pattern) {
         int L = 0, R = text.size() - 1;
         for(int i = 0, sz=pattern.size(); i < sz; i++){
-            int l=L, r=R;
-            // while(l<r-1){
-            //     int m=(l+r)/2;
-            //     if(m+i < text.size()){
-            //         if(text[m+i]>=pattern[i]){
-            //             r=m;
-            //         } else {
-            //             l=m;
-            //         }
-            //     } else {
-            //         r=m;
-            //     }
-            // }
-            // if(text[l+i]>=pattern[i])r=l;
-            // L=r;
-            printf("R: %d %d %d\n",r, i, sz);
+            L=getPosBin(pattern,i,L,R,true);
+            R=getPosBin(pattern,i,L,R,false);
         }
-
+        std::vector<int> ret;
+        while(L<R){
+            ret.push_back(sarray[L++]);
+        }
+        return ret;
     }
 };
