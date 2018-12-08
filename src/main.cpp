@@ -6,11 +6,11 @@
 
 int main(void) {
     sarray banana;
-    banana.fromText("banana");
-    for (auto x: banana.sarray){
-        printf("%d ", x);
-    }
-    auto ret = banana.search("akaka");
+    banana.fromText("bananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANAbananaBANANA");
+   // banana.print();
+   // banana.fromBytes(banana.toBytes());
+   // banana.print();
+    auto ret = banana.search("anana");
     for (auto x: ret){
         printf("\n %d ", x);
     }
