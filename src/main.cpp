@@ -13,7 +13,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     if(argc == 1 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0){
-        printf("Should be a help menu here\n");
+        printf("Usage: \n\tipmt index FILE\n\tipmt search [OPTION] [PATTERN] INDEX\n\t\toptions:\n\t\t\t-c --count: shows just the count\n\t\t\t-p --pattern FILE: search for all the patterns in the file\n");
         return 0;
     } else if(argc == 3 && strcmp(argv[1], "index") == 0) {
         ifstream infile(argv[2]);
