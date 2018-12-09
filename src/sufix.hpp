@@ -5,49 +5,44 @@
 struct trie {
 
     struct node {
-        int value;
+        int locus;
         node** stree;
 
-        node(int value = -1, node** stree = NULL) {
-            this->value = value;
+        node(int locus = -1, node** stree = NULL) {
+            this->locus = locus;
             this->stree = stree;
         }
     };
 
     int count;
-    int value;
-    int index;
+    int locus;
     node** tree;
 
     trie() {
         count = 0;
-        value = 0;
-        index = 0;
+        locus = 0;
         tree = new node*[256];
         memset(tree, 0, 256 * sizeof(node*));
     }
 
-    void add(std::string& s, int i) {
-        int locus = 0;
+    int add(std::string& s, int i) {
+        locus = 0;
         node** stree = tree;
         for(int l=s.size() ; i<l ; i++) {
             node* n = stree[s[i]];
             if(n == NULL) {
                 stree[s[i]] = new node(++count);
-                value = locus;
-                index = i;
-                return;
+                break;
             } else {
                 if(n->stree == NULL) {
                     n->stree = new node*[256];
                     memset(n->stree, 0, 256 * sizeof(node*));
                 }
                 stree = n->stree;
-                locus = n->value;
+                locus = n->locus;
             }
         }
-        value = locus;
-        index = i;
+        return i;
     }
 };
 
@@ -66,9 +61,11 @@ struct rtrie {
     };
 
     std::vector<node*> tree;
+    int count;
 
     rtrie() {
         tree.push_back(new node(0, 0, '\0'));
+        count = 1;
     }
 
     void apply(std::vector<char>& txt, int index, char letter) {
@@ -78,6 +75,7 @@ struct rtrie {
             node* n = new node(++size, index, letter);
             index = tree.size();
             tree.push_back(n);
+            count = index + 1;
         }
 
         txt.insert(txt.end(), size, '\0');
