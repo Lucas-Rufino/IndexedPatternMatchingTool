@@ -1,3 +1,7 @@
+Indexed Pattern Matching Tool
+
+A project to develop a command line system to generate compressed index files to be used to fast search patterns in a text file.
+
 Authors:
 - Arthur Latache Pimentel Gesteira Costa
 - Lucas Alves Rufino
