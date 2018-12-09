@@ -48,9 +48,9 @@ struct decoder {
     int has;
     int k;
 
-    decoder(std::string filename, int buflen = 1000) {
+    decoder(std::string filename, int buflen = 1000, int local = -1) {
         k = ceil(log2(ceil(log2(tree.count + 1)) + 1));
-        ibits.open(filename, buflen);
+        ibits.open(filename, buflen, local);
         has = ibits.read(k);
     }
 
@@ -75,4 +75,5 @@ struct decoder {
     void close() {
         ibits.close();
     }
+    #undef get
 };

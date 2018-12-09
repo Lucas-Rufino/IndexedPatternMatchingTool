@@ -1,11 +1,15 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <set>
+
 enum sarray_compress {normal, smaller_ints};
+
 struct sarray {
 public:
     std::string text;
     std::vector<int> sarray;
+    std::vector<int> bl;
 
 private:
     void addToArray(std::vector<char>& vec, int value, sarray_compress strategy){
@@ -15,6 +19,12 @@ private:
         } else {
             std::cerr<< "NOTIMPLEMENTED";
         }
+    }
+
+    int toLine(int x){
+       int aux = lower_bound(bl.begin(),bl.end(),x) - bl.begin();
+       printf("%d %d %d\n", x, x, aux);
+       return aux;
     }
 
     int getFromArray(std::vector<char>& vec, int offset, int position, sarray_compress strategy){
@@ -30,12 +40,18 @@ private:
     }
 
 public:
-    void print(){
+    void print(bool full=true){
         std::cout<<'"'<<text<<'"'<<std::endl;
         for(auto x:sarray){
             std::cout<<x<<" ";
         }
         std::cout<<std::endl;
+        if(full){
+            for(int i=0;i<text.size(); i++){
+                std::cout<<i<<" | "<<text.substr(sarray[i],text.size()-sarray[i])<<std::endl;
+
+            }
+        }
     }
 
     std::vector<char> toBytes(){
@@ -59,8 +75,14 @@ public:
         for(int i=0;i<4;i++)
             sze += ((unsigned char)bytes[i])<<(i*8);
         text.resize(sze);
-        for(int i=0;i<sze;i++)text[i]=bytes[i+4];
-        text.resize(sze);
+        bl.clear();
+        for(int i=0;i<sze;i++){
+            text[i]=bytes[i+4];
+            if(text[i] =='\n' || text[i]=='\r')
+                bl.push_back(i);
+        }
+        bl.push_back(sze);
+        sarray.resize(sze);
         for(int i=0;i<sze;i++)sarray[i]=getFromArray(bytes, 4 + sze, i, sarray_compress::normal);
     }
 
@@ -71,6 +93,9 @@ public:
         if(txtSize == 1) {
             sarray.resize(1);
             sarray[0] = 0;
+            bl.clear();
+            if(text[0]=='\n' || text[1]=='\r')bl.push_back(0);
+            bl.push_back(1);
         } else {
             sarray.resize(txtSize);
             data.resize(txtSize);
@@ -80,21 +105,25 @@ public:
             for(int i = 0; i < txtSize; i++){
                 base[i] = {{txt[i], 0}, i};
                 data[i] = txt[i];
+                if(txt[i] =='\n' || txt[i]=='\r')
+                    bl.push_back(i);
             }
+            bl.push_back(txtSize);
 
             for(int bs = 1; bs < txtSize; bs *= 2){
                 for(int i = 0; i < txtSize; i++) {
-                    if(base[i].second + bs >= txtSize) base[i].first.second = -1;
+                    if(base[i].second + bs >= txtSize) base[i].first.second = -200;
                     else base[i].first.second = data[base[i].second + bs];
                 }
                 sort(base.begin(), base.end());
                 int ind = 0;
                 for(int i = 0; i < txtSize; i++) {
-                    if(i){
-                        if(base[i].first != base[i-1].first) ind++;
-                    }
+                    auto aux = base[i].first;
                     data[base[i].second] = ind;
                     base[i].first.first = ind;
+                    if(i<txtSize-1){
+                        if(aux != base[i+1].first) ind++;
+                    }
                 }
             }
             for(int i = 0; i < txtSize; i++) {
@@ -125,7 +154,8 @@ private:
     }
 
 public:
-    std::vector<int> search(std::string pattern) {
+    std::vector<int> search(std::string pattern, bool by_lines=true) {
+        print();
         int L = 0, R = text.size() - 1;
         for(int i = 0, sz=pattern.size(); i < sz; i++){
             L=getPosBin(pattern,i,L,R,true);
@@ -134,6 +164,13 @@ public:
         std::vector<int> ret;
         while(L<R){
             ret.push_back(sarray[L++]);
+        }
+        printf("%d -- %d\n",L,R);
+        if(by_lines){
+            std::set<int> lines;
+            for (auto x: ret)lines.insert(toLine(x));
+            ret.clear();
+            for (auto x: lines)ret.push_back(x);
         }
         return ret;
     }

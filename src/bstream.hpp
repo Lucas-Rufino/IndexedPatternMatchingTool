@@ -29,7 +29,7 @@ struct obstream {
             memset(this->buf, 0, this->buflen);
         }
 
-        file.open(filename, std::ofstream::binary);
+        file.open(filename, std::ofstream::binary | std::ofstream::app);
     }
 
     void write(int value) {
@@ -70,17 +70,20 @@ struct ibstream {
 
     ibstream(){};
 
-    ibstream(std::string& filename, int buflen = 1000) {
-    	open(filename, buflen);
+    ibstream(std::string& filename, int buflen = 1000, int local = -1) {
+    	open(filename, buflen, local);
     }
 
-    void open(std::string& filename, int buflen = 1000) {
+    void open(std::string& filename, int buflen = 1000, int local = -1) {
     	sft = 0;
         idx = -1;
 
         this->buflen = buflen;
         this->buf = new char[buflen];
         file.open(filename, std::ofstream::binary);
+        if(local != -1) {
+            file.seekg(local, file.beg);
+        }
         file.read(buf, buflen);
     }
 
