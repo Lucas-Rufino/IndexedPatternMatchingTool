@@ -23,7 +23,7 @@ private:
 
     int toLine(int x){
        int aux = lower_bound(bl.begin(),bl.end(),x) - bl.begin();
-       printf("%d %d %d\n", x, x, aux);
+       //printf("%d %d %d\n", x, x, aux);
        return aux;
     }
 
@@ -155,7 +155,7 @@ private:
 
 public:
     std::vector<int> search(std::string pattern, bool by_lines=true) {
-        print();
+        //print();
         int L = 0, R = text.size() - 1;
         for(int i = 0, sz=pattern.size(); i < sz; i++){
             L=getPosBin(pattern,i,L,R,true);
@@ -165,7 +165,7 @@ public:
         while(L<R){
             ret.push_back(sarray[L++]);
         }
-        printf("%d -- %d\n",L,R);
+        //printf("%d -- %d\n",L,R);
         if(by_lines){
             std::set<int> lines;
             for (auto x: ret)lines.insert(toLine(x));

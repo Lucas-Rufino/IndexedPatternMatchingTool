@@ -1,26 +1,15 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstring>
 #include <string>
 #include <vector>
+#include <set>
 
 #include "lz78.hpp"
 #include "sarray.hpp"
 
 using namespace std;
-
-vector<string> getPatterns(string patternsFile){
-    ifstream pfile(patternsFile);
-    vector<string> patterns;
-    string pattern;
-    while(!pfile.eof()) {
-        getline(pfile, pattern);
-        if(pattern.size() != 0){ 
-            patterns.push_back(pattern);
-        }
-    }
-    return patterns;
-}
 
 int main(int argc, char* argv[]) {
     if(argc == 1 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0){
@@ -31,6 +20,11 @@ int main(int argc, char* argv[]) {
         infile.seekg (0, infile.end);
         int length = infile.tellg();
         infile.seekg (0, infile.beg);
+
+        if(length < 0) {
+            std::cerr << "file not found!" << endl;
+            return -1;
+        }
 
         char* txt = new char[length];
         infile.read(txt, length);
@@ -84,7 +78,21 @@ int main(int argc, char* argv[]) {
                     patterns.push_back(string(argv[i]));
                     state=2;
                 } else if(state==1){
-                    patterns = getPatterns(string(argv[i]));
+                    ifstream pfile(argv[i]);
+
+                    if(pfile.tellg() < 0) {
+                        std::cerr << "patterns file not found!" << endl;
+                        return -1;
+                    }
+
+                    string pattern;
+                    while(!pfile.eof()) {
+                        getline(pfile, pattern);
+                        if(pattern.size() != 0){ 
+                            patterns.push_back(pattern);
+                        }
+                    }
+                    pfile.close();
                     state=2;
                 } else if(state==2){
                     idxFilePath = string(argv[i]);
@@ -101,6 +109,11 @@ int main(int argc, char* argv[]) {
         }
 
         ifstream infile(idxFilePath);
+
+        if(infile.tellg() < 0) {
+            std::cerr << "index file not found!" << endl;
+            return -1;
+        }
 
         int sizeSfx = 0;
         for(int i=24 ; i>=0 ; i-=8) {
@@ -123,11 +136,27 @@ int main(int argc, char* argv[]) {
         sarray aux;
         aux.fromBytes(idxFileBytes);
 
+        set<int> result;
+
         for(string s : patterns) {
             vector<int> indexes = aux.search(s);
-            //TODO: IMPRESSÃO DE LINHAS OU DA CONTAGEM DE LINHAS DE ACORDO COM A RESPOSTA DO SEARCH 
+            result.insert(indexes.begin(), indexes.end());
         }
 
+        if(count) {
+            cout << result.size() << endl;
+        } else {
+            string line;
+            int count_line = 0;
+            stringstream ss(txt);
+            for(int i : result) {
+                while(count_line <= i){
+                    getline(ss, line,'\n');
+                    count_line++;
+                }
+                cout << line << endl;
+            }
+        }
     } else {
         std::cerr << "Wrong usage, try using: ipmt --help";
         return -1;
