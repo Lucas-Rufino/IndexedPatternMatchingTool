@@ -5,13 +5,28 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <chrono>  // for high_resolution_clock
+
+
+// Record start time
+
 
 #include "lz78.hpp"
 #include "sarray.hpp"
 
 using namespace std;
 
+#ifdef TIME_ME_FLAG
+#define time_start(str) {start = std::chrono::high_resolution_clock::now();time_stamp=str;}
+#define time_end {std::chrono::duration<double> dur = std::chrono::high_resolution_clock::now() - start; std::cerr<<"Time of "<<time_stamp<<": "<<dur.count()<<std::endl;}
+#else
+#define time_start(str) {}
+#define time_end {}
+#endif
+
 int main(int argc, char* argv[]) {
+    auto start = std::chrono::high_resolution_clock::now();
+    string time_stamp = "";
     if(argc == 1 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0){
         printf("Usage: \n\tipmt index FILE\n\tipmt search [OPTION] [PATTERN] INDEX\n\t\toptions:\n\t\t\t-c --count: shows just the count\n\t\t\t-p --pattern FILE: search for all the patterns in the file\n");
         return 0;
@@ -31,9 +46,11 @@ int main(int argc, char* argv[]) {
         string fileText(txt);
         infile.close();
 
+        time_start("index");
         sarray aux;
         aux.fromText(fileText);
         std::vector<char> toFile = aux.toBytes();
+        time_end;
 
         int len = strlen(argv[2]) + 5;
         char* newName = new char[len];
@@ -60,9 +77,11 @@ int main(int argc, char* argv[]) {
         outfile.write(toFile.data(), toFile.size());
         outfile.close();
 
+        time_start("encode");
         encoder ecode(newName, 10000);
         ecode.encode(fileText);
         ecode.close();
+        time_end;
     } else if(argc >= 3 && strcmp(argv[1], "search") == 0) {
         int state=0;
         bool count=false;
@@ -128,12 +147,14 @@ int main(int argc, char* argv[]) {
         char* data = new char[sizeSfx];
         infile.read(data, sizeSfx);
         vector<char> idxFileBytes(data, data + sizeSfx);
-
+        time_start("decode");
         decoder dcode(idxFilePath, 10000, infile.tellg());
         string txt = dcode.decode(sizeTxt);                 // <---- string do texto completa
         dcode.close();
-
+        time_end;
         sarray aux;
+
+        time_start("search");
         aux.fromBytes(idxFileBytes);
 
         set<int> result;
@@ -142,7 +163,7 @@ int main(int argc, char* argv[]) {
             vector<int> indexes = aux.search(s);
             result.insert(indexes.begin(), indexes.end());
         }
-
+        time_end;
         if(count) {
             cout << result.size() << endl;
         } else {
