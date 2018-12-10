@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
         time_start("index");
         sarray aux;
         aux.fromText(fileText);
-        std::vector<char> toFile = aux.toBytes();
+        std::vector<unsigned char> toFile = aux.toBytes();
         time_end;
 
         int len = strlen(argv[2]) + 5;
@@ -70,16 +70,15 @@ int main(int argc, char* argv[]) {
         for(int i=24 ; i>=0 ; i-=8) {
             outfile.put(char(toFile.size() >> i));
         }
-        for(int i=24 ; i>=0 ; i-=8) {
+        /*for(int i=24 ; i>=0 ; i-=8) {
             outfile.put(char(fileText.size() >> i));
-        }
-
-        outfile.write(toFile.data(), toFile.size());
+        }*/
+        //outfile.write(toFile.data(), toFile.size());
         outfile.close();
 
         time_start("encode");
         encoder ecode(newName, 10000);
-        ecode.encode(fileText);
+        ecode.encode(toFile);
         ecode.close();
         time_end;
     } else if(argc >= 3 && strcmp(argv[1], "search") == 0) {
@@ -139,23 +138,17 @@ int main(int argc, char* argv[]) {
             sizeSfx = (sizeSfx << 8) | infile.get();
         }
 
-        int sizeTxt = 0;
-        for(int i=24 ; i>=0 ; i-=8) {
-            sizeTxt = (sizeTxt << 8) | infile.get();
-        }
-
-        char* data = new char[sizeSfx];
-        infile.read(data, sizeSfx);
-        vector<char> idxFileBytes(data, data + sizeSfx);
+        std::cerr<<sizeSfx<<std::endl;
+        
         time_start("decode");
         decoder dcode(idxFilePath, 10000, infile.tellg());
-        string txt = dcode.decode(sizeTxt);                 // <---- string do texto completa
+        auto txt = dcode.decode(sizeSfx);                 // <---- string do texto completa
         dcode.close();
         time_end;
         sarray aux;
 
         time_start("search");
-        aux.fromBytes(idxFileBytes);
+        aux.fromBytes(txt);
 
         set<int> result;
 
@@ -169,7 +162,7 @@ int main(int argc, char* argv[]) {
         } else {
             string line;
             int count_line = 0;
-            stringstream ss(txt);
+            stringstream ss(aux.text);
             for(int i : result) {
                 while(count_line <= i){
                     getline(ss, line,'\n');

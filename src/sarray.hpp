@@ -12,7 +12,7 @@ public:
     std::vector<int> bl;
 
 private:
-    void addToArray(std::vector<char>& vec, int value, sarray_compress strategy){
+    void addToArray(std::vector<unsigned char>& vec, int value, sarray_compress strategy){
         if(strategy == normal){
             for(int i=0; i<4; i++)
                 vec.push_back((value >> (i*8))&255);
@@ -27,7 +27,7 @@ private:
        return aux;
     }
 
-    int getFromArray(std::vector<char>& vec, int offset, int position, sarray_compress strategy){
+    int getFromArray(std::vector<unsigned char>& vec, int offset, int position, sarray_compress strategy){
         if(strategy == normal){
             int value=0;
             for(int i=0; i<4; i++)
@@ -54,8 +54,8 @@ public:
         }
     }
 
-    std::vector<char> toBytes(){
-        std::vector<char> ret;
+    std::vector<unsigned char> toBytes(){
+        std::vector<unsigned char> ret;
         for(int i=0;i<4;i++)
             ret.push_back(255&(text.size()>>(i*8)));
         for (auto ch: text){
@@ -67,10 +67,11 @@ public:
         // for(auto x:ret)std::cout<<"["<<(x)<<"]";
         // std::cout<<"\n";
         // for(auto x:ret)std::cout<<"("<<((int) x)<<")";
+        std::cerr<<"Size:"<<ret.size()<<std::endl;
         return ret;
     }
 
-    void fromBytes(std::vector<char> bytes){
+    void fromBytes(std::vector<unsigned char> bytes){
         int sze = 0;
         for(int i=0;i<4;i++)
             sze += ((unsigned char)bytes[i])<<(i*8);

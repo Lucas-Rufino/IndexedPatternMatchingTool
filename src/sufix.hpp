@@ -25,7 +25,7 @@ struct trie {
         memset(tree, 0, 256 * sizeof(node*));
     }
 
-    int add(std::string& s, int i) {
+    int add(std::vector<unsigned char>& s, int i) {
         locus = 0;
         node** stree = tree;
         for(int l=s.size() ; i<l ; i++) {
@@ -68,7 +68,7 @@ struct rtrie {
         count = 1;
     }
 
-    void apply(std::vector<char>& txt, int index, char letter) {
+    void apply(std::vector<unsigned char>& txt, int index, unsigned char letter) {
         int size = tree[index]->size;
 
         if(letter) {

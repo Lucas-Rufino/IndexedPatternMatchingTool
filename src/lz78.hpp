@@ -16,7 +16,7 @@ struct encoder {
         k = 0;
     }
 
-    void encode(std::string& txt) {
+    void encode(std::vector<unsigned char>& txt) {
         int len = txt.size();
         for(int i=0 ; i<len ; i++) {
             i = t.add(txt, i);
@@ -42,7 +42,7 @@ struct decoder {
 
     #define get(p, n) std::get<n>(p)
 
-    std::vector<char> txt;
+    std::vector<unsigned char> txt;
     ibstream ibits;
     rtrie tree;
     int has;
@@ -54,21 +54,25 @@ struct decoder {
         has = ibits.read(k);
     }
 
-    std::string decode(int len) {
+    std::vector<unsigned char> decode(int len) {
         while((txt.size() < len) && has) {
-
             int value = ibits.read(has);
-            char letter = char(ibits.read(8));
+
+            unsigned char letter = (unsigned char)(ibits.read(8));
+
             tree.apply(txt, value, letter);
+
             k = ceil(log2(ceil(log2(tree.count + 1)) + 1));
+
             has = ibits.read(k);
+
         }
 
         int size = txt.size();
-        char* data = txt.data();
+        unsigned char* data = txt.data();
         int min = (len<size ? len : size);
-        std::string info(data, data + min);
-        txt = std::vector<char>(data + min, data + txt.size());
+        std::vector<unsigned char> info(data, data + min);
+        txt = std::vector<unsigned char>(data + min, data + txt.size());
         return info;
     }
     
